@@ -22,14 +22,14 @@ function getRepoContributors(repoOwner, repoName, cb) {
 }
 
 function downloadImageByURL(url, filePath){
-  var data = "";
 
   request.get(url)
   .on("error", function(error){
     console.log(error);
   })
   .on("response", function(response){
-    console.log("Response Status Code:", response.statusCode)
+    console.log("Response Status Code:", response.statusCode);
+    console.log("Response Headers:", response.headers['content-type']);
   })
   .pipe(fs.createWriteStream(`./${filePath}`))
 };
