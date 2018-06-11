@@ -39,9 +39,12 @@ function downloadImageByURL(url, filePath){
 };
 
 
-// getRepoContributors("jquery", "jquery", function(obj){
-//   console.log(obj)
-// });
+getRepoContributors("tensorflow", "tensorflow", function(obj){
+  obj.forEach(function(elem){
+    var curUrl = elem.avatar_url;
+    var curFilePath = `avatars/${elem.login}.jpg`
+    downloadImageByURL(curUrl, curFilePath);
+  })
+});
 
-downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg")
 
