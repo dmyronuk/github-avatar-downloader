@@ -2,6 +2,9 @@ var request = require('request');
 var tokens = require("./tokens.js");
 var fs = require("fs");
 
+var repoOwnerArg = process.argv[2];
+var repoNameArg = process.argv[3];
+
 console.log('Welcome to the GitHub Avatar Downloader!');
 console.log(tokens.GITHUB_TOKEN)
 
@@ -38,13 +41,15 @@ function downloadImageByURL(url, filePath){
   .pipe(fs.createWriteStream(`./${filePath}`))
 };
 
-
-getRepoContributors("tensorflow", "tensorflow", function(obj){
-  obj.forEach(function(elem){
-    var curUrl = elem.avatar_url;
-    var curFilePath = `avatars/${elem.login}.jpg`
-    downloadImageByURL(curUrl, curFilePath);
-  })
-});
-
+if(repoOwnerArg && repoNameArg){
+  getRepoContributors(repoOwnerArg, repoNameArg, function(obj){
+    obj.forEach(function(elem){
+      var curUrl = elem.avatar_url;
+      var curFilePath = `avatars/${elem.login}.jpg`
+      downloadImageByURL(curUrl, curFilePath);
+    })
+  });
+}else{
+  console.log("Error: repo owner and repo name are require arguments")
+}
 
