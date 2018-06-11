@@ -1,13 +1,15 @@
 var request = require('request');
-var tokens = require("./tokens.js");
 var fs = require("fs");
+var dotenv = require("dotenv").config();
+
+console.log(process.env.GITHUB_TOKEN)
 
 function getRepoContributors(repoOwner, repoName, cb) {
   var options = {
     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
       "User-Agent": "dmyronuk",
-      "Authorization": "token " + tokens.GITHUB_TOKEN
+      "Authorization": "token " + process.env.GITHUB_TOKEN
     }
   };
 
