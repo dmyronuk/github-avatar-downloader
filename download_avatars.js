@@ -17,6 +17,14 @@ function getRepoContributors(repoOwner, repoName, cb) {
     }
 
     var contributorObjs = JSON.parse(body);
+    if(contributorObjs.message === "Bad credentials"){
+      console.log("Bad credentials");
+      return;
+    }else if(contributorObjs.message === "Not Found"){
+      console.log("Repository Not Found");
+      return;
+    }
+
     cb(contributorObjs);
   });
 }
@@ -34,20 +42,33 @@ function downloadImageByURL(url, filePath){
   .pipe(fs.createWriteStream(`./${filePath}`))
 };
 
+function checkErrors(){
+  if( ! fs.existsSync("./avatars")){
+    throw "Error: Directory ./avatars must exist in the root folder";
+  }else if( ! fs.existsSync("./.env")){
+    throw "Error: Config file .env must exist in the root folder";
+  }else if( ! process.env.GITHUB_TOKEN){
+    throw "Error: .env  does not contain GITHUB_TOKEN";
+  }else if(process.argv.length !== 4){
+    throw "Error: script takes 2 arguments repo_owner repo_name";
+  }
+};
+
 var repoOwnerArg = process.argv[2];
 var repoNameArg = process.argv[3];
 
 console.log('Welcome to the GitHub Avatar Downloader!');
+try{
+  checkErrors();
+}catch(e){
+  console.log(e);
+  return;
+}
 
-if(repoOwnerArg && repoNameArg){
-  getRepoContributors(repoOwnerArg, repoNameArg, function(obj){
-    obj.forEach(function(elem){
-      var curUrl = elem.avatar_url;
-      var curFilePath = `avatars/${elem.login}.jpg`;
-      downloadImageByURL(curUrl, curFilePath);
-    })
-  });
-}else{
-  console.log("Error: repo owner and repo name are required arguments");
-};
-
+getRepoContributors(repoOwnerArg, repoNameArg, function(obj){
+  obj.forEach(function(elem){
+    var curUrl = elem.avatar_url;
+    var curFilePath = `avatars/${elem.login}.jpg`;
+    downloadImageByURL(curUrl, curFilePath);
+  })
+});
